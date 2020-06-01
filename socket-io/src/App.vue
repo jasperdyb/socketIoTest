@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <ul id="messages">
-      <li v-for="chat in chats" :key="chat.message">{{chat}}</li>
+      <li v-for="chat in chats" :key="chat.message">{{chat.message}}</li>
     </ul>
     <form action @submit.stop.prevent="afterSubmit">
       <input id="m" autocomplete="off" v-model="message" />
@@ -28,23 +28,16 @@ export default {
     connect() {
       // Fired when the socket connects.
       console.log("connected");
-    }
-  },
-  created() {
-    this.$socket.on("chat", function(msg) {
+    },
+    chat(msg) {
       console.log("sockets", msg);
-      this.chats.append({ message: msg });
-    });
+      this.chats.push({ message: msg });
+    }
   },
   methods: {
     afterSubmit() {
       this.$socket.emit("chat", this.message);
       this.message = "";
-    },
-    beforeDestroy() {
-      // using "removeListener" here, but this should be whatever $socket provides
-      // for removing listeners
-      this.$socket.removeAllListeners("chat");
     }
   }
 };
