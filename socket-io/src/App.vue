@@ -25,16 +25,26 @@ export default {
     // HelloWorld
   },
   sockets: {
-    "chat message": function(msg) {
+    connect() {
+      // Fired when the socket connects.
+      console.log("connected");
+    }
+  },
+  created() {
+    this.$socket.on("chat", function(msg) {
       console.log("sockets", msg);
       this.chats.append({ message: msg });
-    }
+    });
   },
   methods: {
     afterSubmit() {
-      console.log(this.message);
-      this.$socket.emit("chat message", this.message);
+      this.$socket.emit("chat", this.message);
       this.message = "";
+    },
+    beforeDestroy() {
+      // using "removeListener" here, but this should be whatever $socket provides
+      // for removing listeners
+      this.$socket.removeAllListeners("chat");
     }
   }
 };
